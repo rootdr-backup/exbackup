@@ -121,7 +121,9 @@ def is_valid_file(url):
         # Partial download for deeper inspection
         try:
             chunk = next(response.iter_content(chunk_size=PARTIAL_DOWNLOAD_SIZE), b"")
-        except (ChunkedEncodingError, IOError) as e:
+        except (ChunkedEncodingError, OSError) as e:
+            if isinstance(e, requests.RequestException):
+                raise
             print(Fore.RED + f"[!] Error reading response stream for {url}: {e}")
             return False
 
